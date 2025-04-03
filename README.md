@@ -2,9 +2,10 @@
 **YOLOv8-based computer vision system to identify safe emergency landing zones from satellite imagery**
 
 ## 📸 Sample Detections
-
 <div align="center">
-  <img src="Screenshot 2025-04-03 205104.png" width="30%" alt="Mountain terrain">
+  <img src="Screenshot 2025-04-03 205104.png" width="80%" alt="Featured detection example">
+</div>
+<div align="center">
   <img src="Screenshot 2025-04-03 211311.png" width="30%" alt="Coastal landing zone">
     <img src="Screenshot 2025-04-03 211420.png" width="30%" alt="Urban area detection">
 
