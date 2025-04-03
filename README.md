@@ -9,6 +9,7 @@
 <div align="center">
   <img src="Screenshot 2025-04-03 211311.png" width="30%" alt="Coastal landing zone">
     <img src="Screenshot 2025-04-03 211420.png" width="30%" alt="Urban area detection">
+    <img src="Screenshot 2025-04-03 204857.png"width="30%" alt="Urban area detection>
 
 </div>
 
