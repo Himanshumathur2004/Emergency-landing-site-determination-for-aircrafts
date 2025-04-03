@@ -1,5 +1,6 @@
 # ✈️ Emergency Landing Site Detection for Aircraft
 **YOLOv8-based computer vision system to identify safe emergency landing zones from satellite imagery**
+![Project Banner](project_banner.png) <!-- Replace with your banner image -->
 
 ## 📸 Sample Detections
 <div align="center">
@@ -19,7 +20,6 @@
 - **Web Interface**: Optional Flask web app for easy testing (included)
 
 
-![Project Banner](assets/banner.jpg) <!-- Replace with your banner image -->
 
 [![GitHub stars](https://img.shields.io/github/stars/your-username/Emergency-Landing-Detection?style=social)](https://github.com/your-username/Emergency-Landing-Detection)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
