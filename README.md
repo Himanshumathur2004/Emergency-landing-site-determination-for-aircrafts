@@ -4,7 +4,7 @@
 ## 📸 Sample Detections
 
 <div align="center">
-  <img src="assets/result1.jpg" width="30%" alt="Urban area detection">
+  <img src="Screenshot 2025-04-03 211420.png" width="30%" alt="Urban area detection">
   <img src="assets/result2.jpg" width="30%" alt="Mountain terrain">
   <img src="assets/result3.jpg" width="30%" alt="Coastal landing zone">
 </div>
