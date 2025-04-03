@@ -21,3 +21,6 @@
 ```bash
 git clone https://github.com/your-username/Emergency-Landing-Detection.git
 cd Emergency-Landing-Detection
+![Screenshot 2025-04-03 211420](https://github.com/user-attachments/assets/1460c2c3-4eed-45a8-a2c5-921b0695e433)
+![Screenshot 2025-04-03 211311](https://github.com/user-attachments/assets/cef01806-d164-41dd-b040-cc631a9835c7)
+![Screenshot 2025-04-03 205104](https://github.com/user-attachments/assets/11954bba-c22c-46fe-b4d3-e0d6a6dd9142)
