@@ -22,10 +22,12 @@
 ## 🌐 Website Preview
 
 <div align="center">
-  <img src="assets/website_demo.png" width="80%" alt="Web interface screenshot">
+  <img src="assets/website_demo.png" width="45%" alt="Website Home">
+  <img src="assets/website_demo.res.png" width="45%" alt="Website Dashboard">
 </div>
 
-*<p align="center">Fig 2. Live web interface for emergency landing detection</p>*
+<p align="center"><i>Fig 2. Web interface: Home (left) and Dashboard (right)</i></p>
+
 
 
 [![GitHub stars](https://img.shields.io/github/stars/your-username/Emergency-Landing-Detection?style=social)](https://github.com/your-username/Emergency-Landing-Detection)
