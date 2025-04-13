@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Leaflet CSS -->
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+/>
+<!-- Leaflet JS -->
+<script
+src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js">
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Results | Emergency Landing Site Detector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #4cc9f0;
+            --success: #4ade80;
+            --warning: #f59e0b;
+            --danger: #f43f5e;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: var(--primary-dark);
+        }
+
+        .subtitle {
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        .results-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .result-header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .confidence-badge {
+            background: white;
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .result-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .result-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .result-image-container {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-image {
+            width: 100%;
+            display: block;
+            transition: transform 0.3s;
+        }
+
+        .result-image:hover {
+            transform: scale(1.02);
+        }
+
+        .result-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-card h3 i {
+            font-size: 1.2rem;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .zone-list {
+            list-style: none;
+        }
+
+        .zone-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .zone-item:last-child {
+            border-bottom: none;
+        }
+
+        .zone-name {
+            font-weight: 500;
+        }
+
+        .zone-confidence {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--light);
+            transform: translateY(-2px);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .map-placeholder {
+            background: #e2e8f0;
+            height: 200px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-plane"></i>
+                <span>Emergency Landing</span>
+            </div>
+            <p class="subtitle">Safe landing zone detection results</p>
+        </header>
+
+        <div class="results-container">
+            <div class="result-header">
+                <div class="result-title">Detection Results</div>
+                <div class="confidence-badge">Overall Confidence: 92%</div>
+            </div>
+
+            <div class="result-content">
+                <div class="result-image-container">
+                    <img src="{{ result_image }}" alt="Detection Results" class="result-image" id="resultImg">
+                </div>
+
+                <div class="result-stats">
+                    <div class="stat-card">
+                        <h3><i class="fas fa-chart-bar"></i> Detection Statistics</h3>
+                        <div class="stat-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">3</div>
+                                <div class="stat-label">Safe Zones</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">92%</div>
+                                <div class="stat-label">Avg Confidence</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">1.2s</div>
+                                <div class="stat-label">Processing Time</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">YOLOv8</div>
+                                <div class="stat-label">Model Version</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3><i class="fas fa-map-marker-alt"></i> Identified Zones</h3>
+                        <ul class="zone-list">
+                            <li class="zone-item">
+                                <span class="zone-name">Open Field</span>
+                                <span class="zone-confidence">96%</span>
+                            </li>
+                            <li class="zone-item">
+                                <span class="zone-name">Road Segment</span>
+                                <span class="zone-confidence">89%</span>
+                            </li>
+                            <li class="zone-item">
+                                <span class="zone-name">Cleared Area</span>
+                                <span class="zone-confidence">91%</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3><i class="fas fa-map"></i> Location Overview</h3>
+                        <div class="map-placeholder">
+                            <i class="fas fa-map-marked-alt"></i> Map view would appear here
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-redo"></i> Analyze Another Image
+            </a>
+            <button id="downloadBtn" class="btn btn-outline">
+                <i class="fas fa-download"></i> Download Report
+            </button>
+            <button class="btn btn-outline">
+                <i class="fas fa-share-alt"></i> Share Results
+            </button>
+        </div>
+
+        <footer>
+            <p>Powered by YOLOv8 | For emergency aviation use | Confidence thresholds may vary</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript for Download -->
+    <script>
+        document.getElementById("downloadBtn").addEventListener("click", function () {
+            const image = document.getElementById("resultImg").src;
+            const link = document.createElement("a");
+            link.href = image;
+            link.download = "detection_result.jpg";
+            link.click();
+        });
+    </script>
+</body>
+</html>
