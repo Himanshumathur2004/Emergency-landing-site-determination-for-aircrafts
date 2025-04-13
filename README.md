@@ -23,7 +23,7 @@
 
 <div align="center">
   <img src="assets/website_demo.png" width="45%" alt="Website Home">
-  <img src="assets/website_demo.res.png" width="45%" alt="Website Dashboard">
+  <img src="assets/website_demo_res.png" width="45%" alt="Website Dashboard">
 </div>
 
 <p align="center"><i>Fig 2. Web interface: Home (left) and Dashboard (right)</i></p>
