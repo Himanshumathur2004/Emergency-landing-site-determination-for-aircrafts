@@ -19,6 +19,13 @@
 - **Customizable**: Adjust confidence thresholds and parameters
 - **Web Interface**: Optional Flask web app for easy testing (included)
 
+## 🌐 Website Preview
+
+<div align="center">
+  <img src="assets/website_demo.png" width="80%" alt="Web interface screenshot">
+</div>
+
+*<p align="center">Fig 2. Live web interface for emergency landing detection</p>*
 
 
 [![GitHub stars](https://img.shields.io/github/stars/your-username/Emergency-Landing-Detection?style=social)](https://github.com/your-username/Emergency-Landing-Detection)
