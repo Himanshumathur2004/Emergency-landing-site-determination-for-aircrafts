@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Landing Site Detector</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/854/854878.png" type="image/png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+        }
+
+        h1 {
+            color: #222;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #444;
+            font-weight: 400;
+            margin-bottom: 30px;
+        }
+
+        .upload-box {
+            border: 2px dashed #888;
+            border-radius: 12px;
+            padding: 40px;
+            margin: 20px 0;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        .upload-box:hover {
+            border-color: #4361ee;
+            background-color: #f0f4ff;
+        }
+
+        #preview {
+            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 5px;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            background-color: #4361ee;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #3a56d4;
+        }
+
+        .btn:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .footer {
+            margin-top: 60px;
+            color: #555;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #4361ee;
+            text-decoration: none;
+        }
+
+        #cameraSection {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #cameraView {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 5px;
+            margin: 10px auto;
+            display: none;
+        }
+
+        #captureBtn {
+            display: none;
+        }
+
+        .toggle-buttons {
+            margin: 20px 0;
+        }
+
+        .toggle-btn {
+            background: #ddd;
+            border: none;
+            padding: 8px 16px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: #4361ee;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1rem; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Emergency Landing Site Detector</h1>
+    <h2>Upload aerial imagery or use live camera to detect safe landing zones</h2>
+
+    <div class="toggle-buttons">
+        <button class="toggle-btn active" id="uploadTabBtn">Upload Image</button>
+        <button class="toggle-btn" id="cameraTabBtn">Live Camera</button>
+    </div>
+
+    <!-- Upload Section -->
+    <div id="uploadSection">
+        <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+            <h3>Click to upload an image</h3>
+            <p>or drag and drop</p>
+            <img id="preview" alt="Image Preview">
+        </div>
+        <form id="uploadForm" action="/predict" method="post" enctype="multipart/form-data">
+            <input type="file" id="fileInput" name="image" accept="image/*" style="display: none;">
+            <button type="submit" class="btn" id="analyzeBtn" disabled>Analyze Image</button>
+        </form>
+    </div>
+
+    <!-- Camera Section -->
+    <div id="cameraSection">
+        <video id="cameraView" autoplay playsinline></video>
+        <button class="btn" id="startCameraBtn">Start Camera</button>
+        <button class="btn" id="captureBtn">Capture & Analyze</button>
+        <canvas id="canvas" style="display:none;"></canvas>
+    </div>
+
+    <div class="footer">
+        <p>Powered by <strong>YOLOv8</strong> | For emergency aviation analysis</p>
+        <p>Developed by <strong>Himanshu Kumar</strong> 🚀 | <a href="mailto:himanshu@example.com">Contact</a></p>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    preview.src = event.target.result;
+                    preview.style.display = 'block';
+                    analyzeBtn.disabled = false;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        const uploadBox = document.querySelector('.upload-box');
+
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.style.borderColor = '#4361ee';
+            uploadBox.style.backgroundColor = '#f0f4ff';
+        });
+
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.style.borderColor = '#888';
+            uploadBox.style.backgroundColor = 'white';
+        });
+
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.style.borderColor = '#888';
+            uploadBox.style.backgroundColor = 'white';
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }
+        });
+
+        const uploadTabBtn = document.getElementById('uploadTabBtn');
+        const cameraTabBtn = document.getElementById('cameraTabBtn');
+        const uploadSection = document.getElementById('uploadSection');
+        const cameraSection = document.getElementById('cameraSection');
+        const startCameraBtn = document.getElementById('startCameraBtn');
+        const captureBtn = document.getElementById('captureBtn');
+        const cameraView = document.getElementById('cameraView');
+        const canvas = document.getElementById('canvas');
+
+        let stream = null;
+
+        uploadTabBtn.addEventListener('click', () => {
+            uploadTabBtn.classList.add('active');
+            cameraTabBtn.classList.remove('active');
+            uploadSection.style.display = 'block';
+            cameraSection.style.display = 'none';
+            stopCamera();
+        });
+
+        cameraTabBtn.addEventListener('click', () => {
+            cameraTabBtn.classList.add('active');
+            uploadTabBtn.classList.remove('active');
+            uploadSection.style.display = 'none';
+            cameraSection.style.display = 'block';
+        });
+
+        startCameraBtn.addEventListener('click', async () => {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                });
+                cameraView.srcObject = stream;
+                cameraView.style.display = 'block';
+                startCameraBtn.style.display = 'none';
+                captureBtn.style.display = 'inline-block';
+            } catch (err) {
+                alert("Could not access camera: " + err.message);
+            }
+        });
+
+        captureBtn.addEventListener('click', () => {
+            canvas.width = cameraView.videoWidth;
+            canvas.height = cameraView.videoHeight;
+
+            const context = canvas.getContext('2d');
+            context.drawImage(cameraView, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(async (blob) => {
+                const formData = new FormData();
+                formData.append('image', blob, 'capture.jpg');
+
+                try {
+                    const response = await fetch('/predict', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        window.location.href = '/result';
+                    } else {
+                        alert("Analysis failed. Please try again.");
+                    }
+                } catch (error) {
+                    alert("Error: " + error.message);
+                }
+            }, 'image/jpeg', 0.9);
+        });
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                cameraView.srcObject = null;
+                cameraView.style.display = 'none';
+                startCameraBtn.style.display = 'inline-block';
+                captureBtn.style.display = 'none';
+                stream = null;
+            }
+        }
+
+        window.addEventListener('beforeunload', stopCamera);
+    </script>
+</body>
+</html>

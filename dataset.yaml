@@ -1,0 +1,11 @@
+
+    path: /content/drive/MyDrive/dataset
+    train: /content/drive/MyDrive/dataset/training/images
+    val: /content/drive/MyDrive/dataset/testing/images
+    test: /content/drive/MyDrive/dataset/testing/images
+    names:
+      0: paved
+      1: unpaved
+      2: vegetation 
+      3: water
+    
